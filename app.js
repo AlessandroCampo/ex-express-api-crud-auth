@@ -22,7 +22,7 @@ const limiter = rateLimit({
     max: 100
 });
 app.use(limiter);
-app.use(helmet());
+
 
 //Generic middlewares
 app.use(express.json());

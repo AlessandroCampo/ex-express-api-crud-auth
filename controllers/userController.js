@@ -4,11 +4,13 @@ const CustomError = require('../utils/CustomError');
 const prismaErorrHandler = require('../utils/prismaErorrHandler.js');
 const bcrpyt = require('bcrypt');
 const { hashPassword } = require('../utils/passwordUtils.js');
-
 const generateToken = require('../middlewares/jwtToken.js');
+const generateResetToken = require('../middlewares/jwtResetToken.js');
+const path = require('path');
 
 
 const fs = require('fs');
+const { sendResetPasswordEmail } = require('../utils/mailer.js');
 
 const register = async (req, res, next) => {
     const { username, email, password, image } = req.body;
@@ -125,17 +127,56 @@ const unfollow = async (req, res, next) => {
     }
 }
 
-const resetPassword = (req, res, next) => {
-    try {
+const resetPassword = async (req, res, next) => {
+    const { userId, password } = req.body;
 
+    try {
+        const hashedNewPassword = await hashPassword(password);
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data: { password: hashedNewPassword }
+        })
+        res.json({
+            message: 'Your password has been succesfully updated'
+        })
     } catch (err) {
         const customError = prismaErorrHandler(err);
         next(customError);
     }
 }
 
+const sendResetMail = async (req, res, next) => {
+    const { userId } = req.body;
+    try {
+        const requestingUser = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        const resetToken = generateResetToken(requestingUser, "20m")
+        sendResetPasswordEmail(requestingUser.email, resetToken)
+
+        return res.json({
+            message: `An email to ${requestingUser.email} has been sent with the instructions to reset your password`
+        });
+
+    } catch (err) {
+        const customError = prismaErorrHandler(err);
+        next(customError);
+    }
+};
+
+const sendResetPage = async (req, res, next) => {
+    try {
+        const filePath = path.join(__dirname, '../views/resetPassword.html');
+        res.sendFile(filePath);
+    } catch (err) {
+        next(err);
+    }
+};
+
 
 
 module.exports = {
-    register, login, follow, unfollow, resetPassword
+    register, login, follow, unfollow, resetPassword, sendResetMail, sendResetPage
 }

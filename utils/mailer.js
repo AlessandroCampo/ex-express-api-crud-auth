@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const mailjetTransport = require('nodemailer-mailjet-transport');
 
 
+
 require('dotenv').config();
 
 const mailjetOptions = {
@@ -14,24 +15,45 @@ const mailjetOptions = {
 
 const transporter = nodemailer.createTransport(mailjetTransport(mailjetOptions));
 
-async function sendEmail(from, to, subject, text) {
+// async function sendEmail(from, to, subject, text) {
+//     try {
+//         const mailOptions = {
+//             from: from,
+//             to: to,
+//             subject: subject,
+//             text: text
+//         };
+
+//         const info = await transporter.sendMail(mailOptions);
+//         console.log('Email sent: ' + info.response);
+//     } catch (error) {
+//         console.error('Error sending email:', error);
+//     }
+// }
+
+
+async function sendResetPasswordEmail(userEmail, resetToken) {
+    console.log(userEmail, resetToken)
     try {
+        const resetLink = `http://localhost:3000/users/reset-password?token=${resetToken}`;
+
+
         const mailOptions = {
-            from: from,
-            to: to,
-            subject: 'Test Email',
-            text: 'This is a test email sent using Nodemailer with Mailjet!'
+            from: process.env.DOMAIN_EMAIL,
+            to: userEmail,
+            subject: 'Password Reset',
+            text: `Please click the following link to reset your password: ${resetLink}`
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
+        return info
     } catch (error) {
         console.error('Error sending email:', error);
     }
 }
 
-sendEmail('alessandrocampo97@gmail.com', 'proteusalex@gmail.com')
+
 
 module.exports = {
-    sendEmail, transporter
+    transporter, sendResetPasswordEmail
 };

@@ -191,24 +191,26 @@ const newPassword = {
             },
             errorMessage: "Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
             bail: true
+        }
+    },
+    confirmPassword: {
+        in: ["body"],
+        notEmpty: {
+            errorMessage: "Please confirm your new password",
+            bail: true,
         },
         custom: {
-            options: async (newPassword, { req }) => {
-                const user = req.body.user;
-                if (!user) {
-                    throw new CustomError('Invalid request', 'No user found for the provided username', 400);
+            options: (confirmPassword, { req }) => {
+                const newPassword = req.body.password;
+                if (confirmPassword !== newPassword) {
+                    throw new CustomError('Validation Error', 'Password and confirm password do not match', 400);
                 }
-
-                const isSamePassword = await comparePassword(newPassword, user.password);
-                if (isSamePassword) {
-                    throw new CustomError('Invalid password', 'The new password cannot be the same as the current password. Please choose a different password.', 400);
-                }
-
                 return true;
             }
         }
-    },
-}
+    }
+};
+
 
 
 module.exports = {
