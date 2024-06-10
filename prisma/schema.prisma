@@ -48,6 +48,16 @@ model User {
   followedBy          User[]    @relation("UserFollows")
   following           User[]    @relation("UserFollows")
   failedLoginAttempts Int       @default(0)
+  sentMessages        Message[] @relation("SentMessages")
+  receivedMessages    Message[] @relation("ReceivedMessages")
+}
+
+model Message {
+  id          Int  @id @default(autoincrement())
+  sender      User @relation("SentMessages", fields: [senderId], references: [id])
+  recipient   User @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  senderId    Int
+  recipientId Int
 }
 
 model Comment {
