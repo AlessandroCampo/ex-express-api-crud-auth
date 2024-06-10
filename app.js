@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 const globalErrorHandler = require('./middlewares/globalErrorHandler.js');
@@ -9,8 +12,19 @@ const postRouter = require('./routers/postRouter.js');
 const userRouter = require('./routers/userRouter.js');
 const commentRotuer = require('./routers/commentRouter.js');
 
-//middlewares
+//cors handler
+app.use(cors());
 
+
+//Secuirty middlewares
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100
+});
+app.use(limiter);
+app.use(helmet());
+
+//Generic middlewares
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
