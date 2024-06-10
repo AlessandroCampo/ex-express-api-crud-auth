@@ -16,6 +16,7 @@ const auth = require('../middlewares/auth.js');
 
 router.post('/register', uploadFile, validator(schemas.user), userController.register);
 router.post('/login', validator(schemas.login), userController.login);
+router.post('reset-password', auth, validator(schemas.newPassword), userController.resetPassword)
 router.get('/:userId/posts', index)
 router.post('/:userId/follow', auth, userController.follow)
 router.delete('/:userId/follow', auth, userController.unfollow)

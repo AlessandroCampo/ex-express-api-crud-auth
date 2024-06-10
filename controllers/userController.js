@@ -4,7 +4,10 @@ const CustomError = require('../utils/CustomError');
 const prismaErorrHandler = require('../utils/prismaErorrHandler.js');
 const bcrpyt = require('bcrypt');
 const { hashPassword } = require('../utils/passwordUtils.js');
+
 const generateToken = require('../middlewares/jwtToken.js');
+
+
 const fs = require('fs');
 
 const register = async (req, res, next) => {
@@ -122,8 +125,17 @@ const unfollow = async (req, res, next) => {
     }
 }
 
+const resetPassword = (req, res, next) => {
+    try {
+
+    } catch (err) {
+        const customError = prismaErorrHandler(err);
+        next(customError);
+    }
+}
+
 
 
 module.exports = {
-    register, login, follow, unfollow
+    register, login, follow, unfollow, resetPassword
 }

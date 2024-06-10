@@ -69,10 +69,10 @@ const user = {
                 minLowercase: 1,
                 minUppercase: 1,
                 minNumbers: 1,
-                minSymbols: 0,
+                minSymbols: 1,
                 returnScore: false,
             },
-            errorMessage: "Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number",
+            errorMessage: "Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
             bail: true
         }
     },
@@ -173,7 +173,44 @@ const login = {
     },
 };
 
+const newPassword = {
+    password: {
+        in: ["body"],
+        notEmpty: {
+            errorMessage: "Please insert your new password for your account",
+            bail: true,
+        },
+        isStrongPassword: {
+            options: {
+                minLength: 8,
+                minLowercase: 1,
+                minUppercase: 1,
+                minNumbers: 1,
+                minSymbols: 1,
+                returnScore: false,
+            },
+            errorMessage: "Password should be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one symbol",
+            bail: true
+        },
+        custom: {
+            options: async (newPassword, { req }) => {
+                const user = req.body.user;
+                if (!user) {
+                    throw new CustomError('Invalid request', 'No user found for the provided username', 400);
+                }
+
+                const isSamePassword = await comparePassword(newPassword, user.password);
+                if (isSamePassword) {
+                    throw new CustomError('Invalid password', 'The new password cannot be the same as the current password. Please choose a different password.', 400);
+                }
+
+                return true;
+            }
+        }
+    },
+}
+
 
 module.exports = {
-    user, login
+    user, login, newPassword
 }
