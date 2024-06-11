@@ -61,7 +61,16 @@ const index = async (req, res, next) => {
                         avatar: true
                     }
                 },
-                comments: true,
+                comments: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                avatar: true
+                            }
+                        }
+                    }
+                },
                 likes: true
             },
             where

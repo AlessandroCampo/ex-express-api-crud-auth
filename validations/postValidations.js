@@ -128,7 +128,6 @@ const postContent = {
 const comment = {
     content: {
         in: ["body"],
-        escape: true,
         notEmpty: {
             errorMessage: "Your comment is empty",
             bail: true
