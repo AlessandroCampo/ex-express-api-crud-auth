@@ -6,12 +6,10 @@ const createUniqueSlugForPost = require('../utils/createUniqueSlugForPost.js');
 
 
 const create = async (req, res, next) => {
-    const { name, content, published, userId, image } = req.body;
-    if (!name) {
-        return next(new CustomError('Validation error', 'The name field is required', 400))
-    }
+    const { name, content, published, userId, image, user } = req.body;
+    const defaultName = name ? name : `${user.username.toLocalLowerCase()}-${new Date().toISOString()}`;
     const data = {
-        name,
+        name: defaultName,
         content,
         published,
         image,
@@ -50,10 +48,14 @@ const index = async (req, res, next) => {
         const allPosts = await prisma.post.findMany({
             take: Number(limit),
             skip: offset,
+            orderBy: {
+                createdAt: 'desc'
+            },
             include: {
                 user: {
                     select: {
-                        username: true
+                        username: true,
+                        avatar: true
                     }
                 },
                 comments: {

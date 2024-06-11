@@ -30,7 +30,8 @@ const register = async (req, res, next) => {
             message: 'Your account has been succesfully created',
             user: {
                 username: newUser.username,
-                email: newUser.email
+                email: newUser.email,
+                profilePic: newUser.avatar
             },
             token
         })

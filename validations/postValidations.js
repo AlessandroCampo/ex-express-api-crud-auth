@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const CustomError = require("../utils/CustomError");
 const { isValidURL } = require("../utils/genericUtils");
+const { options } = require("../routers/postRouter");
 const prisma = new PrismaClient();
 
 
@@ -9,6 +10,7 @@ const post = {
     name: {
         in: ["body"],
         escape: true,
+        optional: true,
         notEmpty: {
             errorMessage: "Please add a title for your post",
             bail: true,

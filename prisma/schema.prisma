@@ -15,7 +15,7 @@ datasource db {
 
 model Post {
   id        Int       @id @default(autoincrement())
-  name      String
+  name      String?
   slug      String    @unique
   image     String?
   content   String    @db.Text
@@ -53,11 +53,15 @@ model User {
 }
 
 model Message {
-  id          Int  @id @default(autoincrement())
-  sender      User @relation("SentMessages", fields: [senderId], references: [id])
-  recipient   User @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  id          Int      @id @default(autoincrement())
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  content     String   @db.Text
   senderId    Int
   recipientId Int
+  status      String   @default("sent")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Comment {

@@ -11,6 +11,7 @@ const globalErrorHandler = require('./middlewares/globalErrorHandler.js');
 const postRouter = require('./routers/postRouter.js');
 const userRouter = require('./routers/userRouter.js');
 const commentRotuer = require('./routers/commentRouter.js');
+const messagesRouter = require('./routers/messagesRouter.js');
 
 //cors handler
 app.use(cors());
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/posts', postRouter);
 app.use('/users', userRouter);
 app.use('/comments', commentRotuer);
+app.use('/messages', messagesRouter)
 
 
 
