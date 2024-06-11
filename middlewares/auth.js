@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
         if (err) {
             throw new CustomError("Authentication Error", err.message.replace('jwt', 'token'), 403)
         }
-        req.user = payload;
+        req.body.user = payload;
         //not sure
         req.body.userId = payload.id;
     })
