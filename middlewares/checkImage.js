@@ -34,6 +34,7 @@ const uploadFile = (req, res, next) => {
 
         const baseUrl = `${req.protocol}://${req.get('host')}`;
         req.body.image = `${baseUrl}/uploads/${req.file.filename}`;
+        console.log(req.body.image)
 
         next();
     });

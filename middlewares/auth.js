@@ -18,6 +18,7 @@ module.exports = (req, res, next) => {
         req.body.user = payload;
         //not sure
         req.body.userId = payload.id;
+        console.log(req.body.userId)
     })
     next()
 };

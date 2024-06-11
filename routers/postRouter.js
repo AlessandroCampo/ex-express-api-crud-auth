@@ -14,7 +14,7 @@ const auth = require('../middlewares/auth.js');
 const isUserPost = require('../middlewares/isUserPost.js');
 
 
-router.post('/', auth, uploadFile, validator(schemas.post), postController.create)
+router.post('/', uploadFile, auth, validator(schemas.post), postController.create)
 router.get('/', postController.index)
 router.get('/:slug', validator(schemas.postSlug), postController.show)
 router.put('/:slug', auth, isUserPost, validator(schemas.postSlug), validator(schemas.post), postController.update)

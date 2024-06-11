@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const CustomError = require("../utils/CustomError");
 const { isValidURL } = require("../utils/genericUtils");
-const { options } = require("../routers/postRouter");
 const prisma = new PrismaClient();
 
 
