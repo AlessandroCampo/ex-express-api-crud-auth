@@ -30,6 +30,7 @@ const register = async (req, res, next) => {
             message: 'Your account has been succesfully created',
             user: {
                 username: newUser.username,
+                id: newUser.id,
                 email: newUser.email,
                 profilePic: newUser.avatar
             },
@@ -54,8 +55,9 @@ const login = async (req, res, next) => {
         message: "Login succesful",
         user: {
             username: user.username,
+            id: user.id,
             email: user.email,
-            profile_picture: user.avatar
+            profilePic: user.avatar
         },
         token
     })

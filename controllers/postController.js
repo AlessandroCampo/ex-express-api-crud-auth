@@ -61,16 +61,8 @@ const index = async (req, res, next) => {
                         avatar: true
                     }
                 },
-                comments: {
-                    select: {
-                        content: true
-                    }
-                },
-                _count: {
-                    select: {
-                        likes: true
-                    }
-                }
+                comments: true,
+                likes: true
             },
             where
         });
