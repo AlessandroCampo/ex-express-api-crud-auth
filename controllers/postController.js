@@ -6,8 +6,8 @@ const createUniqueSlugForPost = require('../utils/createUniqueSlugForPost.js');
 
 
 const create = async (req, res, next) => {
-    const { name, content, published, userId, image, user } = req.body;
-    console.log(user);
+    const { name, content, published, userId, image } = req.body;
+    const user = req.user;
     const defaultName = name ? name : `${user.username.toLowerCase()}-${new Date().toISOString()}`;
     const toSlugString = content.split(" ").slice(0, 3).join(" ");
 

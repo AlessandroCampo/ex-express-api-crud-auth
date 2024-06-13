@@ -25,7 +25,7 @@ const user = {
         },
         custom: {
             options: async (username) => {
-                const foundUser = await prisma.user.findUnique({
+                const foundUser = await prisma.user.findFirst({
                     where: { username }
                 })
                 if (foundUser) {
