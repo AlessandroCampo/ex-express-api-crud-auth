@@ -112,7 +112,23 @@ const login = {
         custom: {
             options: async (username, { req }) => {
                 const foundUser = await prisma.user.findUnique({
-                    where: { username }
+                    where: { username },
+                    include: {
+                        followedBy: {
+                            select: {
+                                id: true,
+                                username: true,
+                                avatar: true
+                            }
+                        },
+                        following: {
+                            select: {
+                                id: true,
+                                username: true,
+                                avatar: true
+                            }
+                        }
+                    }
                 });
                 if (!foundUser) {
                     throw new CustomError('Incorrect credentials', 'Username or password incorrect. You have a maximum of 5 login attempts. If you forgot your credentials, consider starting the recovery process', 400);

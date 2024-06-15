@@ -39,7 +39,6 @@ const post = {
     },
     content: {
         in: ["body"],
-        escape: true,
         notEmpty: {
             errorMessage: "Please add a caption for your post",
             bail: true

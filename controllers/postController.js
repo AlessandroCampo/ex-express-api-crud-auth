@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const CustomError = require('../utils/CustomError');
 const prismaErorrHandler = require('../utils/prismaErorrHandler.js');
 const createUniqueSlugForPost = require('../utils/createUniqueSlugForPost.js');
+const tagsFromPostContent = require('../utils/tagsFromPost.js');
 
 
 const create = async (req, res, next) => {
@@ -18,13 +19,44 @@ const create = async (req, res, next) => {
         image,
         slug: await createUniqueSlugForPost(toSlugString),
         userId: Number(userId)
-    }
+    };
+
     try {
-        const newPost = await prisma.post.create({ data })
-        return res.json({
-            message: 'New post has been succesfully created',
-            newPost
+        // Extract tags from post content using AI utility function
+        const postTags = await tagsFromPostContent(content);
+
+        // Create or find tags and collect their IDs
+        const tagIds = [];
+        if (postTags && postTags.length > 0) {
+            for (const tag of postTags) {
+                let existingTag = await prisma.tag.findFirst({
+                    where: { name: tag }
+                });
+                if (!existingTag) {
+                    existingTag = await prisma.tag.create({
+                        data: { name: tag }
+                    });
+                }
+                tagIds.push(existingTag.id);
+            }
+        }
+
+        // Create the new post
+        console.log(tagIds)
+        const newPost = await prisma.post.create({
+            data: {
+                ...data,
+                Tag: {
+                    connect: tagIds.map(id => ({ id }))
+                }
+            },
+
         })
+
+        return res.json({
+            message: 'New post has been successfully created',
+            newPost
+        });
     } catch (err) {
         const customError = prismaErorrHandler(err);
         next(customError);

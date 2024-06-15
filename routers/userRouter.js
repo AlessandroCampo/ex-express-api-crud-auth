@@ -17,7 +17,7 @@ const verifyResetToken = require('../middlewares/verifyResetToken.js');
 
 router.post('/register', uploadFile, validator(schemas.user), userController.register);
 router.post('/login', validator(schemas.login), userController.login);
-router.get('/reset-password-mail', auth, userController.sendResetMail)
+router.post('/reset-password-mail', userController.sendResetMail)
 router.get('/reset-password', userController.sendResetPage)
 router.post('/reset-password', verifyResetToken, validator(schemas.newPassword), userController.resetPassword)
 router.get('/:userId/posts', index)

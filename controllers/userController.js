@@ -24,7 +24,25 @@ const register = async (req, res, next) => {
     }
 
     try {
-        const newUser = await prisma.user.create({ data })
+        const newUser = await prisma.user.create({
+            data,
+            include: {
+                followedBy: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true
+                    }
+                },
+                following: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true
+                    }
+                }
+            }
+        });
         const token = generateToken(newUser);
         return res.json({
             message: 'Your account has been succesfully created',
@@ -32,7 +50,9 @@ const register = async (req, res, next) => {
                 username: newUser.username,
                 id: newUser.id,
                 email: newUser.email,
-                profilePic: newUser.avatar
+                profilePic: newUser.avatar,
+                followers: newUser.followedBy,
+                following: newUser.following
             },
             token
         })
@@ -57,7 +77,9 @@ const login = async (req, res, next) => {
             username: user.username,
             id: user.id,
             email: user.email,
-            profilePic: user.avatar
+            profilePic: user.avatar,
+            followers: user.followedBy,
+            following: user.following
         },
         token
     })
@@ -149,13 +171,17 @@ const resetPassword = async (req, res, next) => {
 }
 
 const sendResetMail = async (req, res, next) => {
-    const { userId } = req.body;
+    const { email } = req.body;
+    console.log(req.body)
     try {
         const requestingUser = await prisma.user.findUnique({
             where: {
-                id: userId
+                email
             }
         })
+        if (!requestingUser) {
+            return next();
+        }
         const resetToken = generateResetToken(requestingUser, "20m")
         sendResetPasswordEmail(requestingUser.email, resetToken)
 
