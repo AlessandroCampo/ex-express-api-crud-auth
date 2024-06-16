@@ -30,6 +30,7 @@
     "nodemailer-mailjet-transport": "^1.0.4",
     "prisma-better-errors": "^1.0.4",
     "slugify": "^1.6.6",
+    "socket.io": "^4.7.5",
     "vue-tailwind": "^2.5.1"
   },
   "devDependencies": {

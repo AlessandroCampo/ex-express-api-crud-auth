@@ -7,6 +7,8 @@ const auth = require('../middlewares/auth.js');
 const schemas = require('../validations/messageValidation.js');
 const validator = require('../middlewares/validator.js');
 
+
+
 router.post("/", auth, validator(schemas.newMessage), messageController.sendMessage);
 router.get("/:interId");
 router.put("/:messageId",);

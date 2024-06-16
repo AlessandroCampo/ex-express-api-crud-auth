@@ -12,6 +12,55 @@ const path = require('path');
 const fs = require('fs');
 const { sendResetPasswordEmail } = require('../utils/mailer.js');
 
+const getUserInfo = async (req, res, next) => {
+    const { userId } = req.body;
+    if (!userId) {
+        throw new CustomError("User not found", "Error retrieving your user data", 404)
+    }
+    try {
+        const foundUser = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                followedBy: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true
+                    }
+                },
+                following: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true
+                    }
+                }
+            }
+        });
+
+        if (!foundUser) {
+            throw new CustomError("User not found", "Error retrieving your user data", 404)
+        }
+        res.json({
+            message: "Retrieved user info correctly",
+            user: {
+                username: foundUser.username,
+                id: foundUser.id,
+                email: foundUser.email,
+                profilePic: foundUser.avatar,
+                followers: foundUser.followedBy || [],
+                following: foundUser.following || []
+            }
+        })
+
+    } catch (err) {
+        const customError = prismaErorrHandler(err);
+        next(customError);
+    }
+
+};
+
+
 const register = async (req, res, next) => {
     const { username, email, password, image } = req.body;
     console.log(image)
@@ -207,5 +256,5 @@ const sendResetPage = async (req, res, next) => {
 
 
 module.exports = {
-    register, login, follow, unfollow, resetPassword, sendResetMail, sendResetPage
+    register, login, follow, unfollow, resetPassword, sendResetMail, sendResetPage, getUserInfo
 }

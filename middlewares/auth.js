@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const CustomError = require('../utils/CustomError');
+const { getIo } = require('../socket');
 require('dotenv').config();
 
 module.exports = (req, res, next) => {
@@ -18,7 +19,7 @@ module.exports = (req, res, next) => {
         req.user = payload;
         //not sure
         req.body.userId = payload.id;
-        console.log(req.body.userId)
+
     })
     next()
 };

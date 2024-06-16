@@ -1,5 +1,6 @@
 const axios = require('axios');
 require('dotenv').config();
+const edenApiKey = process.env.EDEN_AI_KEY || process.env.EDEN_AI_SANDBOX
 
 const tagsFromPost = async (postContent) => {
     let foundTags = [];
@@ -7,7 +8,7 @@ const tagsFromPost = async (postContent) => {
         method: "POST",
         url: "https://api.edenai.run/v2/text/topic_extraction",
         headers: {
-            authorization: "Bearer " + process.env.EDEN_AI_KEY,
+            authorization: "Bearer " + process.env.EDEN_AI_SANDBOX,
         },
         data: {
             providers: "openai",
