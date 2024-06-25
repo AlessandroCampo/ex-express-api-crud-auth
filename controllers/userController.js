@@ -13,13 +13,13 @@ const fs = require('fs');
 const { sendResetPasswordEmail } = require('../utils/mailer.js');
 
 const getUserInfo = async (req, res, next) => {
-    const { userId } = req.body;
-    if (!userId) {
-        throw new CustomError("User not found", "Error retrieving your user data", 404)
+    const { username } = req.params;
+    if (!username) {
+        throw new CustomError("User not found", "Error retrieving  user data", 404)
     }
     try {
         const foundUser = await prisma.user.findUnique({
-            where: { id: userId },
+            where: { username },
             include: {
                 followedBy: {
                     select: {
@@ -34,6 +34,12 @@ const getUserInfo = async (req, res, next) => {
                         username: true,
                         avatar: true
                     }
+                },
+                posts: {
+                    include: {
+                        likes: true,
+                        comments: true
+                    }
                 }
             }
         });
@@ -41,13 +47,16 @@ const getUserInfo = async (req, res, next) => {
         if (!foundUser) {
             throw new CustomError("User not found", "Error retrieving your user data", 404)
         }
+
         res.json({
             message: "Retrieved user info correctly",
             user: {
                 username: foundUser.username,
                 id: foundUser.id,
                 email: foundUser.email,
-                profilePic: foundUser.avatar,
+                posts: foundUser.posts,
+                avatar: foundUser.avatar,
+                isAdmin: foundUser.isAdmin,
                 followers: foundUser.followedBy || [],
                 following: foundUser.following || []
             }
@@ -128,7 +137,8 @@ const login = async (req, res, next) => {
             email: user.email,
             profilePic: user.avatar,
             followers: user.followedBy,
-            following: user.following
+            following: user.following,
+            isAdmin: user.isAdmin,
         },
         token
     })

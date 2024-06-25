@@ -49,7 +49,7 @@ const post = {
         },
         isLength: {
             options: { min: 5, max: 250 },
-            errorMessage: "The title of your post should be between 5 and 50 characters long.",
+            errorMessage: "The content of your post should be between 5 and 250 characters long.",
             bail: true
         }
     },

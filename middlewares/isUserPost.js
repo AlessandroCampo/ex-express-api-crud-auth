@@ -8,16 +8,18 @@ module.exports = async (req, res, next) => {
             throw new CustomError("User not found", "Error retrieving user data", 404);
         }
 
-        const { id } = req.user;
+        const { id, isAdmin } = req.user;
         const { slug } = req.params;
         const user = await prisma.user.findUnique({ where: { id } });
         const post = await prisma.post.findUnique({ where: { slug } });
+
+        const adminRequest = isAdmin && user.isAdmin;
 
         if (!post) {
             throw new CustomError("Post not found", `Post with slug ${slug} was not found`, 404);
         }
 
-        if (user.id !== post.userId) {
+        if (!adminRequest && user.id !== post.userId) {
             throw new CustomError("Insufficient permission", "You are only allowed to update or delete your own posts", 401);
         }
 

@@ -50,6 +50,12 @@ const create = async (req, res, next) => {
                     connect: tagIds.map(id => ({ id }))
                 }
             },
+            include: {
+                user: true,
+                likes: true,
+                comments: true,
+                Tag: true
+            }
 
         })
 
@@ -136,21 +142,20 @@ const show = async (req, res, next) => {
         const foundPost = await prisma.post.findUnique({
             where: { slug },
             include: {
-                user: {
-                    select: {
-                        username: true
-                    }
-                },
+                user: true,
                 comments: {
-                    select: {
-                        content: true
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                avatar: true
+                            }
+                        }
                     }
                 },
-                _count: {
-                    select: {
-                        likes: true
-                    }
-                }
+
+                likes: true
+
             }
         });
         if (foundPost) {
